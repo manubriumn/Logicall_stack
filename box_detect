@@ -1,56 +1,86 @@
 import cv2
 import numpy as np
+import testbedutlis as coord
 import utlis
 import math
-######
+import pyrealsense2 as rs
 
-webcam = True
-path = "resources/img5.png"
-cap = cv2.VideoCapture(2)
-cap.set(10, 160)
-cap.set(3, 1920)
-cap.set(4, 1080)
-scale = 3
-wP = 250 * scale
-hP = 180 * scale
+class RealSenseImageProcessing:
+    def __init__(self):
+        self.pipe = self.realsense_setup()
+        self.scale = 3
+        self.wP = 250 * self.scale
+        self.hP = 180 * self.scale
 
-while True:
-    if webcam:success, img = cap.read()
-    else: img = cv2.imread(path)
+    def realsense_setup(self):
+        pipe = rs.pipeline()
+        cfg = rs.config()
+        cfg.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+        cfg.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+        pipe.start(cfg)
+        return pipe
 
-    imgContours, conts = utlis.getContours(img,minArea=50000,filter=4)
-    if len(conts) != 0:
-        biggest = conts[0][2]
-        #print(biggest)
-        imgWarp = utlis.warpImg(img, biggest, wP, hP)
-        imgContours2, conts2 = utlis.getContours(imgWarp, minArea=2000, filter=4, cThr=[50,50],draw=False)
+    def process_realsense_frame(self):
+        frame = self.pipe.wait_for_frames()
+        depth_frame = frame.get_depth_frame()
+        color_frame = frame.get_color_frame()
+        depth_image = np.asanyarray(depth_frame.get_data())
+        color_image = np.asanyarray(color_frame.get_data())
+        depth_cm = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.5), cv2.COLORMAP_JET)
+        gray_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
+
+        img = gray_image
+        utlis.getContours(img, showCanny=True)
+        imgContours, conts = utlis.getContours(img, minArea=50000, filter=4)
 
         if len(conts) != 0:
-            for obj in conts2:
-                cv2.polylines(imgContours2,[obj[2]],True,(0,255,0),2)
-                nPoints = utlis.reorder(obj[2])
-                resultW = utlis.findDis(nPoints[0][0] // scale, nPoints[1][0] // scale) / 10
-                rounded_resultW = math.floor(resultW * 10) / 10
-                resultH = utlis.findDis(nPoints[0][0] // scale, nPoints[2][0] // scale) / 10
-                rounded_resultH = math.floor(resultH * 10) / 10
-                nW = rounded_resultW
-                nH = rounded_resultH
-                cv2.arrowedLine(imgContours2, (nPoints[0][0][0], nPoints[0][0][1]),
-                                (nPoints[1][0][0], nPoints[1][0][1]),
-                                (255, 0, 255), 3, 8, 0, 0.05)
-                cv2.arrowedLine(imgContours2, (nPoints[0][0][0], nPoints[0][0][1]),
-                                (nPoints[2][0][0], nPoints[2][0][1]),
-                                (255, 0, 255), 3, 8, 0, 0.05)
-                x, y, w, h = obj[3]
-                cv2.putText(imgContours2, '{}cm'.format(nW), (x + 30, y - 10), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.5,
-                            (255, 0, 255), 2)
-                cv2.putText(imgContours2, '{}cm'.format(nH), (x - 70, y + h // 2), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.5,
-                            (255, 0, 255), 2)
+            biggest = conts[0][2]
+            imgWarp = utlis.warpImg(img, biggest, self.wP, self.hP)
+            imgContours2, conts2 = utlis.getContours(imgWarp, minArea=2000, filter=4, cThr=[40, 40], draw=False)
 
+            if len(conts2) != 0:
+                self.process_contours(imgContours2, conts2)
 
+        cv2.imshow("original", img)
+        cv2.imshow('depth', depth_cm)
 
+    def process_contours(self, imgContours2, conts2):
+        for obj in conts2:
+            cv2.polylines(imgContours2, [obj[2]], True, (0, 255, 0), 2)
+            nPoints = utlis.reorder(obj[2])
+            resultW = utlis.findDis(nPoints[0][0] // self.scale, nPoints[1][0] // self.scale) / 10
+            rounded_resultW = math.floor(resultW * 10) / 10
+            resultH = utlis.findDis(nPoints[0][0] // self.scale, nPoints[2][0] // self.scale) / 10
+            rounded_resultH = math.floor(resultH * 10) / 10
+            nW = rounded_resultW
+            nH = rounded_resultH
+            print(nW)
+            print(nH)
+            cv2.arrowedLine(imgContours2, (nPoints[0][0][0], nPoints[0][0][1]),
+                            (nPoints[1][0][0], nPoints[1][0][1]),
+                            (255, 0, 255), 3, 8, 0, 0.05)
+            cv2.arrowedLine(imgContours2, (nPoints[0][0][0], nPoints[0][0][1]),
+                            (nPoints[2][0][0], nPoints[2][0][1]),
+                            (255, 0, 255), 3, 8, 0, 0.05)
+            x, y, w, h = obj[3]
+            cv2.putText(imgContours2, '{}cm'.format(nW), (x + 30, y - 10), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.5,
+                        (255, 0, 255), 2)
+            cv2.putText(imgContours2, '{}cm'.format(nH), (x - 70, y + h // 2), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.5,
+                        (255, 0, 255), 2)
+
+        coord.printMiddleCoordinates(conts2)
         cv2.imshow("warp", imgContours2)
 
-    img = cv2.resize(img,(0,0),None,0.5,0.5)
-    cv2.imshow("original", img)
-    cv2.waitKey(1)
+    def run(self):
+        while True:
+            self.process_realsense_frame()
+
+            if cv2.waitKey(1) == ord('q'):
+                break
+
+        self.pipe.stop()
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    realSenseProcessor = RealSenseImageProcessing()
+    realSenseProcessor.run()
