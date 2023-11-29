@@ -32,7 +32,7 @@ def getContours(img, cThr = [80,80],showCanny=False,minArea = 1000,filter = 0,dr
     return img, finalCountours
 
 def reorder(myPoints):
-    print(myPoints.shape)
+    #print(myPoints.shape)
     myPointsNew = np.zeros_like(myPoints)
     myPoints = myPoints.reshape((4, 2))
     add = myPoints.sum(1)
