@@ -1,3 +1,5 @@
+from Randomsize import Random_size as RS
+import time
 """
 measurements:               [LxWxH]
 small box measurements :    [400x205x85]
@@ -18,6 +20,7 @@ class Stacking_boxes():
                     [0, 0, 0, 0, 0]
                                 ]
         self.box_Pallets = {'small': 0, 'medium': 0, 'large': 0, 'extra large': 0}
+        self.Smallest_stack()
 
     def boxes(self, box_size):
         sizes = {'small': self.height_small_box,
@@ -40,9 +43,10 @@ class Stacking_boxes():
 
         return self.stacking_matrix
 
-    def Smallest_stack(self, Input_val= "" ):
+    def Smallest_stack(self):
         while any(val <= self.max_height_pallet for row in self.stacking_matrix for val in row):
-            box_size = input(f'Fill in size (small/medium/large): ')
+            box_size = RS()
+            time.sleep(0.1)
             box_size_val = self.boxes(box_size)
             print(f'Size: {box_size_val}')
             self.stacking_matrix = self.stack(box_size_val)
@@ -65,6 +69,7 @@ class Stacking_boxes():
         elif box_size == 'extra large':
             self.box_Pallets['extra large'] += 1
             Box_list[3]+=1
+        time.sleep(0.1)
         return Box_list
 
     def show_box_Pallets(self):
@@ -77,5 +82,3 @@ if __name__ == '__main__':
     stacker.Smallest_stack()
 if __name__ == '__Download':
     stacker.update_Pallets()
-else: 
-    Stacking_boxes()
