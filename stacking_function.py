@@ -14,10 +14,10 @@ class Stacking_boxes():
         self.height_extralarge_box = 260
         self.max_height_pallet = 1000
         self.stacking_matrix = [
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0]
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0]
                                 ]
-        self.box_counts = {'small': 0, 'medium': 0, 'large': 0, 'extra large': 0}
+        self.box_Pallets = {'small': 0, 'medium': 0, 'large': 0, 'extra large': 0}
 
     def boxes(self, box_size):
         sizes = {'small': self.height_small_box,
@@ -30,7 +30,7 @@ class Stacking_boxes():
         return 0
 
     def stack(self, box_size_val):
-        if len(self.stacking_matrix) != 2 or any(len(row) != 4 for row in self.stacking_matrix):
+        if len(self.stacking_matrix) != 2 or any(len(row) != 5 for row in self.stacking_matrix):
             return "Not in matrix, expected a 2x4 matrix."
 
         min_waarde = min(min(row) for row in self.stacking_matrix)
@@ -48,32 +48,34 @@ class Stacking_boxes():
             self.stacking_matrix = self.stack(box_size_val)
             print(self.stacking_matrix)
             if box_size_val > 0:
-                self.update_counts(box_size)
-            self.show_box_counts()
+                self.update_Pallets(box_size)
+            self.show_box_Pallets()
     
-    def update_counts(self, box_size):
+    def update_Pallets(self, box_size):
         Box_list = [0,0,0,0]
         if box_size == 'small':
-            self.box_counts['small'] += 1
+            self.box_Pallets['small'] += 1
             Box_list[0]+=1
         elif box_size == 'medium':
-            self.box_counts['medium'] += 1
+            self.box_Pallets['medium'] += 1
             Box_list[1]+=1
         elif box_size == 'large':
-            self.box_counts['large'] += 1
+            self.box_Pallets['large'] += 1
             Box_list[2]+=1
         elif box_size == 'extra large':
-            self.box_counts['extra large'] += 1
+            self.box_Pallets['extra large'] += 1
             Box_list[3]+=1
         return Box_list
 
-    def show_box_counts(self):
-        print("Box counts:")
-        for box_size, count in self.box_counts.items():
-            print(f"{box_size.capitalize()} boxes: {count}")
+    def show_box_Pallets(self):
+        print("Box Pallets:")
+        for box_size, Pallet in self.box_Pallets.items():
+            print(f"{box_size.capitalize()} boxes: {Pallet}")
 
 if __name__ == '__main__':
     stacker = Stacking_boxes()
     stacker.Smallest_stack()
+if __name__ == '__Download':
+    stacker.update_Pallets()
 else: 
     Stacking_boxes()
