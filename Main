@@ -1,3 +1,16 @@
+# import all files
 from HUI import HUI
+from Stacking_function import Stacking_boxes as SB
+from Realsense import RealSenseImageProcessing as RS
+#import library's
+import threading 
 
-HUI()
+
+
+thread1 = threading.Thread(target=HUI, daemon=False)
+thread2 = threading.Thread(target=SB, daemon=True)
+# thread3 = threading.Thread(target=RS, daemon=True)
+
+thread1.start()
+thread2.start()
+# thread3.start()
