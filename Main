@@ -1,4 +1,3 @@
 from HUI import HUI
 
-
-HUI.Login_val()
+HUI()
