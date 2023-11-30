@@ -1,15 +1,17 @@
 import customtkinter as CTK
-import customtkinter as CTK
+import time
+from Stacking_function import Stacking_boxes as SB
 from Realsense import RealSenseImageProcessing
-
+from Download import Download as DL
 
 class HUI:
     def __init__(self):
-        self.Small_boxes = 1
-        self.Medium_boxes = 2
-        self.Large_boxes = 3
-        self.Extra_large_boxes = 4
-
+        SB = [1,2,3,4]
+        self.Small_boxes = SB[0]
+        self.Medium_boxes = SB[1]
+        self.Large_boxes = SB[2]
+        self.Extra_large_boxes = SB[3]
+        time.sleep(1)
         self.Login_CTK()    #comment out to skip
         if self.Login_val == True:
             self.Main_frame()   #comment out to skip
@@ -21,7 +23,7 @@ class HUI:
         password = entry_password.get()
         self.Login_val = False
         Data_login = {"Freek": "Verloop", "Janmartijn": "Lobregt", "Ibnu": "Yoga", "Mumtaz": "Rahmawan", "": ""}
-
+        time.sleep(1)
         if name in Data_login and password == Data_login[name]:
             print("Login successful!")
             Main_login_frame.destroy()
@@ -31,6 +33,7 @@ class HUI:
             print("Incorrect username or password!")
 
     def Login_CTK(self):
+        time.sleep(1)
         Main_login_frame = CTK.CTk()
         Main_login_frame.geometry("1920/2x1080/2")
 
@@ -43,14 +46,14 @@ class HUI:
         Login_label = CTK.CTkLabel(master=Login_frame, text="Login System")
         Login_label.pack(pady=12, padx=10)
 
-        entry_name = CTK.CTkEntry(master=Login_frame, placeholder_text="Username")
-        entry_name.pack(pady=10, padx=30)
+        self.entry_name = CTK.CTkEntry(master=Login_frame, placeholder_text="Username")
+        self.entry_name.pack(pady=10, padx=30)
 
-        entry_password = CTK.CTkEntry(master=Login_frame, placeholder_text="Password", show="*")
-        entry_password.pack(pady=10, padx=30)
+        self.entry_password = CTK.CTkEntry(master=Login_frame, placeholder_text="Password", show="*")
+        self.entry_password.pack(pady=10, padx=30)
 
-        login_button = CTK.CTkButton(master=Login_frame, text="Login", 
-                                     command=lambda: self.Login_val(entry_name, entry_password, Main_login_frame))
+        login_button = CTK.CTkButton(master=Login_frame, text="Login", command=lambda: 
+                                        self.Login_val(self.entry_name, self.entry_password, Main_login_frame))
         
         login_button.pack(pady=20, padx=50)
 
@@ -60,7 +63,7 @@ class HUI:
     def Main_frame(self):
         while True:
             self.MainHUI_frame = CTK.CTk()
-            self.MainHUI_frame.geometry("1920x1080")
+            self.MainHUI_frame.geometry(f"{1920-960}x{1080/2}")
             CTK.set_appearance_mode("dark")
             CTK.set_default_color_theme("dark-blue")
 
@@ -81,7 +84,7 @@ class HUI:
                                         height= 100,
                                         fg_color="green",
                                         font=("Arial", 50), 
-                                        command= ""#self.start_button_callback
+                                        command= self.start_button_callback
                                         )
             Start_button.pack(pady=20, padx=100), Start_button.place(x= 500, y= 50)
 
@@ -98,7 +101,7 @@ class HUI:
                                         width= 250,
                                         height= 100,
                                         font=("Arial", 50), 
-                                        command= "")
+                                        command= self.Download)
             Download_button.pack(pady=20, padx=100), Download_button.place(x= 800, y= 175)
 
             self.Box_display("Small", self.MainHUI_frame, 1, self.Small_boxes)
@@ -109,26 +112,31 @@ class HUI:
             MainHUI = self.MainHUI_frame.mainloop()
             return MainHUI
     
-    def Box_display(self, Name, master, count, size):
+    def Box_display(self, Name, master, Pallet, size):
         master = master
         Label = CTK.CTkLabel(master=master, text= f"{Name} box", font=("Arial", 26))
         Label.pack(pady=0,padx=10)
-        Label.place(x=10, y= 50*count + 50)
-        counter = CTK.CTkLabel(master=master, text=f"{size}", font=("Arial", 26))
-        counter.pack(pady=0,padx=10)
-        counter.place(x=300,y=50*count+50)
-        return Label,counter
+        Label.place(x=10, y= 50*Pallet + 50)
+        Palleter = CTK.CTkLabel(master=master, text=f"{size}", font=("Arial", 26))
+        Palleter.pack(pady=0,padx=10)
+        Palleter.place(x=300,y=50*Pallet+50)
+        return Label,Palleter
     
     def Logout(self):
         self.MainHUI_frame.destroy()
         self.Login_CTK()
+    
+    def Download(self):
+        print("Download started")
+        Download = DL
+        Download.__init__
 
-    # def start_button_callback(self):
-    #     self.MainHUI_frame.destroy()
-    #     image_processor = ImageProcessing(path="resources/img5.png", webcam=False)
-    #     image_processor.run()
-    #     realSenseProcessor = RealSenseImageProcessing()
-    #     realSenseProcessor.run()
+    def start_button_callback(self):
+        self.MainHUI_frame.destroy()
+        image_processor = ""#ImageProcessing(path="resources/img5.png", webcam=False)
+        image_processor.run()
+        realSenseProcessor = RealSenseImageProcessing()
+        realSenseProcessor.run()
 
 if __name__ == '__main__':
     HUI()
