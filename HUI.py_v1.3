@@ -1,16 +1,12 @@
 import customtkinter as CTK
 import time
+import Stacking_function as Sf
 from Stacking_function import Stacking_boxes as SB
 from Realsense import RealSenseImageProcessing
 from Download import Download as DL
 
 class HUI:
     def __init__(self):
-        SB = [1,2,3,4]
-        self.Small_boxes = SB[0]
-        self.Medium_boxes = SB[1]
-        self.Large_boxes = SB[2]
-        self.Extra_large_boxes = SB[3]
         time.sleep(1)
         self.Login_CTK()    #comment out to skip
         if self.Login_val == True:
@@ -84,7 +80,7 @@ class HUI:
                                         height= 100,
                                         fg_color="green",
                                         font=("Arial", 50), 
-                                        command= self.start_button_callback
+                                        command= SB
                                         )
             Start_button.pack(pady=20, padx=100), Start_button.place(x= 500, y= 50)
 
@@ -103,23 +99,37 @@ class HUI:
                                         font=("Arial", 50), 
                                         command= self.Download)
             Download_button.pack(pady=20, padx=100), Download_button.place(x= 800, y= 175)
-
-            self.Box_display("Small", self.MainHUI_frame, 1, self.Small_boxes)
-            self.Box_display("medium", self.MainHUI_frame, 2, self.Medium_boxes)
-            self.Box_display("Large", self.MainHUI_frame, 3, self.Large_boxes)
-            self.Box_display("Extra large", self.MainHUI_frame, 4, self.Extra_large_boxes)
             
+            Update_button = CTK.CTkButton(master=self.MainHUI_frame, 
+                                        text="Update",
+                                        width= 50,
+                                        height= 50,
+                                        font=("Arial", 18), 
+                                        command=self.Box_counts and self.Box_display(Name="",master=self.MainHUI_frame,Pallet=0))
+            Update_button.pack(pady=20, padx=100), Update_button.place(x= 10, y= 350)
+
+            self.Box_counts()
+            self.Box_display("Small", self.MainHUI_frame, 0)
+            self.Box_display("medium", self.MainHUI_frame, 1)
+            self.Box_display("Large", self.MainHUI_frame, 2)
+            self.Box_display("Extra large", self.MainHUI_frame, 3)
+
             MainHUI = self.MainHUI_frame.mainloop()
             return MainHUI
     
-    def Box_display(self, Name, master, Pallet, size):
+    def Box_display(self, Name, master, Pallet: int):
         master = master
         Label = CTK.CTkLabel(master=master, text= f"{Name} box", font=("Arial", 26))
         Label.pack(pady=0,padx=10)
-        Label.place(x=10, y= 50*Pallet + 50)
-        Palleter = CTK.CTkLabel(master=master, text=f"{size}", font=("Arial", 26))
+        Label.place(x=10, y= 50*Pallet + 100)
+        Palleter = CTK.CTkLabel(master=master, text=f"{None}", font=("Arial", 26))
         Palleter.pack(pady=0,padx=10)
-        Palleter.place(x=300,y=50*Pallet+50)
+        Palleter.place(x=300,y=50*Pallet+100)
+        print(self.Box_counts())
+        if self.Box_counts == any:
+            Val = self.Box_counts()
+            print(Val)
+            Palleter.configure(text= Val[Pallet])
         return Label,Palleter
     
     def Logout(self):
@@ -137,6 +147,12 @@ class HUI:
         image_processor.run()
         realSenseProcessor = RealSenseImageProcessing()
         realSenseProcessor.run()
+    
+    def Box_counts(self):
+        print("import")
+        from Stacking_function import export_final_box_list
+        self.Box = export_final_box_list
+        return self.Box
 
 if __name__ == '__main__':
     HUI()
