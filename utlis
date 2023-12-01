@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def getContours(img, cThr = [80,80],showCanny=False,minArea = 1000,filter = 0,draw = False):
+def getContours(img, cThr = [151,151],showCanny=False,minArea = 1000,filter = 0,draw = False):
     #imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     imgGray = cv2.cvtColor(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), cv2.COLOR_RGB2GRAY)
     imgBlur = cv2.GaussianBlur(imgGray, (5, 5), 1)
@@ -32,7 +32,7 @@ def getContours(img, cThr = [80,80],showCanny=False,minArea = 1000,filter = 0,dr
     return img, finalCountours
 
 def reorder(myPoints):
-    #print(myPoints.shape)
+    print(myPoints.shape)
     myPointsNew = np.zeros_like(myPoints)
     myPoints = myPoints.reshape((4, 2))
     add = myPoints.sum(1)
