@@ -9,6 +9,7 @@ extra large measurements:   [420x260x260]
 """
 
 class Stacking_boxes():
+    final_box_list = [0, 0, 0, 0]
     def __init__(self):
         self.height_small_box = 85
         self.height_medium_box = 125
@@ -52,8 +53,11 @@ class Stacking_boxes():
             self.stacking_matrix = self.stack(box_size_val)
             print(self.stacking_matrix)
             if box_size_val > 0:
-                self.update_Pallets(box_size)
+                box_list = self.update_Pallets(box_size)
+                self.final_box_list = [sum(x) for x in zip(self.final_box_list, box_list)] 
             self.show_box_Pallets()
+        print(self.final_box_list)      
+        return self.final_box_list
     
     def update_Pallets(self, box_size):
         Box_list = [0,0,0,0]
@@ -76,9 +80,19 @@ class Stacking_boxes():
         print("Box Pallets:")
         for box_size, Pallet in self.box_Pallets.items():
             print(f"{box_size.capitalize()} boxes: {Pallet}")
+    
+    def get_final_box_list(self):
+        return self.final_box_list
+
+def run():
+    stacker = Stacking_boxes()
+    export_final_box_list = stacker.get_final_box_list()
+
+    if __name__ == '__Download':
+        stacker.update_Pallets()
+    return export_final_box_list
 
 if __name__ == '__main__':
-    stacker = Stacking_boxes()
-    stacker.Smallest_stack()
-if __name__ == '__Download':
-    stacker.update_Pallets()
+    run()
+
+export_final_box_list = run
