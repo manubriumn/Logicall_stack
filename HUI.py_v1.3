@@ -1,60 +1,18 @@
 import customtkinter as CTK
 import time
-import Stacking_function as Sf
 from Stacking_function import Stacking_boxes as SB
 from Realsense import RealSenseImageProcessing
 from Download import Download as DL
 
+
 class HUI:
-    def __init__(self):
+    def __init__(self, Login_val):
         time.sleep(1)
-        self.Login_CTK()    #comment out to skip
+        self.Login_val = Login_val
         if self.Login_val == True:
             self.Main_frame()   #comment out to skip
         else: 
             exit()
-        
-    def Login_val(self, entry_name, entry_password, Main_login_frame):
-        name = entry_name.get()
-        password = entry_password.get()
-        self.Login_val = False
-        Data_login = {"Freek": "Verloop", "Janmartijn": "Lobregt", "Ibnu": "Yoga", "Mumtaz": "Rahmawan", "": ""}
-        time.sleep(1)
-        if name in Data_login and password == Data_login[name]:
-            print("Login successful!")
-            Main_login_frame.destroy()
-            self.Login_val = True
-            return self.Login_val 
-        else:
-            print("Incorrect username or password!")
-
-    def Login_CTK(self):
-        time.sleep(1)
-        Main_login_frame = CTK.CTk()
-        Main_login_frame.geometry("1920/2x1080/2")
-
-        CTK.set_appearance_mode("dark")
-        CTK.set_default_color_theme("dark-blue")
-
-        Login_frame = CTK.CTkFrame(master=Main_login_frame)
-        Login_frame.pack(pady=50, padx=60, fill="both", expand=True)
-
-        Login_label = CTK.CTkLabel(master=Login_frame, text="Login System")
-        Login_label.pack(pady=12, padx=10)
-
-        self.entry_name = CTK.CTkEntry(master=Login_frame, placeholder_text="Username")
-        self.entry_name.pack(pady=10, padx=30)
-
-        self.entry_password = CTK.CTkEntry(master=Login_frame, placeholder_text="Password", show="*")
-        self.entry_password.pack(pady=10, padx=30)
-
-        login_button = CTK.CTkButton(master=Login_frame, text="Login", command=lambda: 
-                                        self.Login_val(self.entry_name, self.entry_password, Main_login_frame))
-        
-        login_button.pack(pady=20, padx=50)
-
-        Main_login_frame.mainloop()
-
 
     def Main_frame(self):
         while True:
@@ -73,6 +31,9 @@ class HUI:
                                           command= self.Logout)
             Logout_button.pack(pady=20, padx=40)
             Logout_button.place(x=1350,y=50)
+
+            if self.Login_val == False:
+                quit()
 
             Start_button = CTK.CTkButton(master=self.MainHUI_frame, 
                                         text="start",
@@ -134,7 +95,8 @@ class HUI:
     
     def Logout(self):
         self.MainHUI_frame.destroy()
-        self.Login_CTK()
+        self.Login_val = False
+        return self.Login_val
     
     def Download(self):
         print("Download started")
@@ -153,6 +115,6 @@ class HUI:
         from Stacking_function import export_final_box_list
         self.Box = export_final_box_list
         return self.Box
-
+    
 if __name__ == '__main__':
     HUI()
