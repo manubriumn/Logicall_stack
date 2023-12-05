@@ -1,0 +1,74 @@
+import pyrealsense2 as rs
+import numpy as np
+import cv2
+
+pipe = rs.pipeline()
+cfg = rs.config()
+
+cfg.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+cfg.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+
+pipe.start(cfg)
+
+while True:
+    # Wait for a coherent pair of frames: depth and color
+    frames = pipe.wait_for_frames()
+    depth_frame = frames.get_depth_frame()
+    color_frame = frames.get_color_frame()
+
+    if not depth_frame or not color_frame:
+        continue
+
+    # Convert images to numpy arrays
+    depth_image = np.asanyarray(depth_frame.get_data())
+    color_image = np.asanyarray(color_frame.get_data())
+
+    # Convert depth frame to meters (assuming depth_units is in meters)
+    depth_scale = pipe.get_active_profile().get_device().first_depth_sensor().get_depth_scale()
+    depth_image_meters = depth_image * depth_scale
+
+    # Choose a pixel (for example, the center of the image)
+    x, y = 320, 240  # Change these coordinates as needed
+
+    # Get the distance to the chosen pixel
+    distance = depth_image_meters[y, x]
+
+    # Create a mask for distances under 0.4 meters
+    mask = np.where(depth_image_meters < 0.5, 255, 0).astype(np.uint8)
+
+    # Find contours in the mask
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    if contours:
+        # Find the largest contour (assuming it's the region under 0.4 meters)
+        largest_contour = max(contours, key=cv2.contourArea)
+
+        # Calculate the centroid of the largest contour
+        M = cv2.moments(largest_contour)
+        if M['m00'] != 0:
+            centroid_x = int(M['m10'] / M['m00'])
+            centroid_y = int(M['m01'] / M['m00'])
+
+            # Apply the mask to the depth colormap
+            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.5), cv2.COLORMAP_JET)
+            depth_colormap = cv2.bitwise_and(depth_colormap, depth_colormap, mask=mask)
+
+            # Draw a circle at the centroid on the depth colormap
+            depth_colormap = cv2.circle(depth_colormap, (centroid_x, centroid_y), 5, (0, 255, 0), -1)
+
+            # Display the middle coordinate
+            print(f"Middle coordinate of mapped area: ({centroid_x}, {centroid_y})")
+
+    # Display the distance
+    print(f"Distance to pixel ({x},{y}): {distance} meters")
+
+    # Display the frames
+    cv2.imshow('Color', color_image)
+    cv2.imshow('Depth', depth_colormap)
+
+    if cv2.waitKey(1) == ord('q'):
+        break
+
+# Stop streaming
+pipe.stop()
+cv2.destroyAllWindows()
