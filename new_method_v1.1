@@ -54,13 +54,16 @@ while True:
             depth_colormap = cv2.bitwise_and(depth_colormap, depth_colormap, mask=mask)
 
             # Draw a circle at the centroid on the depth colormap
-            depth_colormap = cv2.circle(depth_colormap, (centroid_x, centroid_y), 5, (0, 255, 0), -1)
+            depth_colormap = cv2.circle(depth_colormap, (centroid_x, centroid_y), 5, (255, 0, 255), -1)
 
             # Display the middle coordinate
-            print(f"Middle coordinate of mapped area: ({centroid_x}, {centroid_y})")
+            #print(f"Middle coordinate of mapped area: ({centroid_x}, {centroid_y})")
+            print(centroid_x)
+            print(centroid_y)
 
     # Display the distance
-    print(f"Distance to pixel ({x},{y}): {distance} meters")
+    #print(f"Distance to pixel ({x},{y}): {distance} meters")
+    print(distance)
 
     # Display the frames
     cv2.imshow('Color', color_image)
