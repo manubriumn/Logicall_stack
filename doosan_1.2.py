@@ -30,75 +30,73 @@ def classify_distance(distance):
 def move_robot(sock, classification):
     global status
     try:
-        sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=80, a=80)")
         ##======== MVT FOR SMALL BOXES
         if classification == "small" :
-            time.sleep(1)
-            sock.sendall(b"movel(posx(547.0, -52.6, 204.1, 168.5, -177.8, -11.9), v=80, a=80)") ### get small
+            time.sleep(5)
+            sock.sendall(b"movel(posx(547.0, -52.6, 204.1, 168.5, -177.8, -11.9), v=100, a=100)") ### get small
             time.sleep(5)
             status = 1
             print(f"stattt: {status}")
-        if status == 1 and classification != "small":
-            time.sleep(5)
-            sock.sendall(b"set_digital_output(1, ON)")
-            time.sleep(6)
-            sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=80, a=80)")
-            time.sleep(7)
-            sock.sendall(b"movel(posx(630.6, 587.0, 224.4, 177.7, -173.2, -3.1), v=80, a=80)")
-            time.sleep(8)
-            sock.sendall(b"movel(posx(630.7, 582.7, 182.5, 172.9, -173.5, -8.1), v=80, a=80)")
-            time.sleep(9)
-            sock.sendall(b"set_digital_output(1, OFF)")
-            time.sleep(11)
-            status = 0
-            sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=80, a=80)")
+            if status == 1 :
+                time.sleep(5)
+                sock.sendall(b"set_digital_output(1, ON)")
+                time.sleep(6)
+                sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=80, a=80)")
+                time.sleep(7)
+                sock.sendall(b"movel(posx(630.6, 587.0, 224.4, 177.7, -173.2, -3.1), v=80, a=80)")
+                time.sleep(8)
+                sock.sendall(b"movel(posx(630.7, 582.7, 182.5, 172.9, -173.5, -8.1), v=80, a=80)")
+                time.sleep(9)
+                sock.sendall(b"set_digital_output(1, OFF)")
+                time.sleep(11)
+                status = 0
+                sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=80, a=80)")
 
 
         ##========MVT FOR MEDIUM BOXES
 
-        if classification == "medium":
+        elif classification == "medium":
             sock.sendall(b"set_digital_output(1, OFF)")
-            time.sleep(1)
+            time.sleep(5)
             sock.sendall(b"movel(posx(545.8, -66.4, 245.8, 151.3, -176.5, -28.9), v=40, a=40)") ### get medium
             time.sleep(5)
             status = 2
             print(f"stattt: {status}")
-        if status == 2 and classification != "medium":
-            time.sleep(5)
-            sock.sendall(b"set_digital_output(1, ON)")
-            time.sleep(5)
-            sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=40, a=40)")
-            time.sleep(5)
-            sock.sendall(b"movel(posx(630.6, 587.0, 224.4, 177.7, -173.2, -3.1), v=40, a=40)")
-            time.sleep(5)
-            sock.sendall(b"movel(posx(630.7, 582.7, 182.5, 172.9, -173.5, -8.1), v=40, a=40)")
-            time.sleep(5)
-            sock.sendall(b"set_digital_output(1, OFF)")
-            time.sleep(5)
-            status = 0
-            sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=60, a=60)")
+            if status == 2 :
+                time.sleep(5)
+                sock.sendall(b"set_digital_output(1, ON)")
+                time.sleep(6)
+                sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=80, a=80)")
+                time.sleep(7)
+                sock.sendall(b"movel(posx(630.6, 587.0, 324.4, 177.7, -173.2, -3.1), v=80, a=80)")
+                time.sleep(8)
+                sock.sendall(b"movel(posx(630.7, 582.7, 282.5, 172.9, -173.5, -8.1), v=80, a=80)")
+                time.sleep(9)
+                sock.sendall(b"set_digital_output(1, OFF)")
+                time.sleep(11)
+                status = 0
+                sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=80, a=80)")
 
         ##=========MVT FOR BIG BOXES
-        if classification == "large" :
+        elif classification == "large" :
             sock.sendall(b"set_digital_output(1, OFF)")
-            time.sleep(1)
+            time.sleep(5)
             sock.sendall(b"movel(posx(569.3, -62.2, 379.0, 145.9, -178.3, -34.3), v=60, a=60)") ### get big
             time.sleep(1)
             status = 3
             print(f"stattt: {status}")
-        if status == 3:
-            sock.sendall(b"set_digital_output(1, ON)")
-            time.sleep(1)
-            sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=40, a=40)")
-            time.sleep(1)
-            sock.sendall(b"set_digital_output(1, OFF)")
+            if status == 3:
+                sock.sendall(b"set_digital_output(1, ON)")
+                time.sleep(1)
+                sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=40, a=40)")
+                time.sleep(1)
+                sock.sendall(b"set_digital_output(1, OFF)")
 
-        if classification == "unknown":
+        elif classification == "unknown":
+            time.sleep(5)
+            status = 0
             sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=60, a=60)")
 
-        else:
-            sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=60, a=60)")
-            print("Unknown classification")
     except Exception as e:
         print(f"Error moving the robot: {e}")
 
@@ -179,7 +177,7 @@ def robot_thread():
     sock.connect(robot_address)
 
     try:
-       pass
+       sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=80, a=80)")
     except Exception as e:
         print(f"Error initializing the robot: {e}")
     else:
