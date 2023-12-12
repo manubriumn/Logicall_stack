@@ -6,6 +6,7 @@ import threading
 import time
 
 status = 0
+xx =0
 
 # Function to classify distance
 def classify_distance(distance):
@@ -25,15 +26,44 @@ def classify_distance(distance):
     else:
         return "unknown"
 
+def scale_coordinate(pixel_coord):
+    # Given coordinates
+    real_world_start = -4
+    real_world_end = -92.0
+
+    # Given pixel coordinates
+    pixel_start = 300
+    pixel_end = 346
+
+    # Calculate the scaling factor for x-values
+    x_scaling_factor = (real_world_end - real_world_start) / (pixel_end - pixel_start)
+
+    # Function to scale x-coordinate
+    def scale_x_coordinate(x, scaling_factor):
+        scaled_x = (x - pixel_start) * scaling_factor + real_world_start
+        return scaled_x
+
+    # Check if the pixel_coord is within the given range
+    if pixel_coord < pixel_start or pixel_coord > pixel_end:
+        return "Pixel coordinate out of range"
+
+    # Scale the input pixel coordinate
+    scaled_x = scale_x_coordinate(pixel_coord, x_scaling_factor)
+
+    return scaled_x
+
+
 
 # Function to move the robot based on classification
 def move_robot(sock, classification):
     global status
+    global xx
     try:
         ##======== MVT FOR SMALL BOXES
         if classification == "small" :
+            print (xx)
             time.sleep(5)
-            sock.sendall(b"movel(posx(547.0, -52.6, 204.1, 168.5, -177.8, -11.9), v=100, a=100)") ### get small
+            sock.sendall(f"movel(posx(547.0, {xx}, 204.1, 168.5, -177.8, -11.9), v=80, a=80)".encode()) ### get small
             time.sleep(5)
             status = 1
             print(f"stattt: {status}")
@@ -102,6 +132,7 @@ def move_robot(sock, classification):
 
 # Function to handle vision processing
 def vision_thread(sock):
+    global xx
     pipe = rs.pipeline()
     cfg = rs.config()
     cfg.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
@@ -109,6 +140,7 @@ def vision_thread(sock):
     pipe.start(cfg)
 
     while True:
+
         frames = pipe.wait_for_frames()
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
@@ -150,8 +182,10 @@ def vision_thread(sock):
                 print(centroid_x)
                 print(centroid_y)
 
-                map((centroid_x, ),(centroid_y, ))
-
+                  # Change this to any pixel coordinate within the range (300-346)
+                scaled_result = scale_coordinate(centroid_x)
+                xx = scaled_result
+                print(f"Scaled coordinate for xx  {xx}")
                 move_robot(sock, classification)
 
         print(f"Distance to pixel ({x},{y}): {distance} meters")
@@ -164,6 +198,36 @@ def vision_thread(sock):
 
     pipe.stop()
     cv2.destroyAllWindows()
+
+
+def scale_coordinate(pixel_coord):
+    # Given coordinates
+    real_world_start = -4
+    real_world_end = -92.0
+
+    # Given pixel coordinates
+    pixel_start = 300
+    pixel_end = 346
+
+    # Calculate the scaling factor for x-values
+    x_scaling_factor = (real_world_end - real_world_start) / (pixel_end - pixel_start)
+
+    # Function to scale x-coordinate
+    def scale_x_coordinate(x, scaling_factor):
+        scaled_x = (x - pixel_start) * scaling_factor + real_world_start
+        return scaled_x
+
+    # Check if the pixel_coord is within the given range
+    if pixel_coord < pixel_start or pixel_coord > pixel_end:
+        return "Pixel coordinate out of range"
+
+    # Scale the input pixel coordinate
+    scaled_x = scale_x_coordinate(pixel_coord, x_scaling_factor)
+
+    return scaled_x
+
+
+# Test the function
 
 
 
