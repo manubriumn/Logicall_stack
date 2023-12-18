@@ -46,7 +46,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
     camera = DepthCamera()
 
     try:
-        while True:
+        for i in range(1):
             data = camera.get_data()
             if data:
                 classification, centroid_x, centroid_y, distance = data
@@ -61,13 +61,14 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                 print(f"Scaled coordinate for xx  {xx}")
                 # =========== ROBOT HOME POS MVT =============#
                 sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
-                time.sleep(4)
-
+                time.sleep(3)
                 if classification == size:
+                    z1 = {'s': 204.1, 'm': 245.8, 'xl': 379.0}
+                    zz = z1[size]
                     print(xx)
-                    time.sleep(5)
+                    time.sleep(4)
                     sock.sendall(
-                        f"movel(posx(547.0, {xx}, 204.1, 168.5, -177.8, -11.9), v=200, a=200)".encode())  ### get small
+                        f"movel(posx(547.0, {xx}, {zz}, 168.5, -177.8, -11.9), v=200, a=200)".encode())  ### get small
                     time.sleep(4)
                     status = 1
                     print(f"stattt: {status}")
@@ -80,7 +81,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                         sock.sendall(b"movej(posj(121.9, 15.8, 75.8, 181.1, -84.3, -9.2), v=20, a=20)")
                         time.sleep(7)
                         sock.sendall(
-                            f"movel(posx({x}, {y}, {z+100}, 168.5, -177.8, -11.9), v=80, a=80)".encode())
+                            f"movel(posx({x}, {y}, {z+zz}, 168.5, -177.8, -11.9), v=80, a=80)".encode())
                         time.sleep(8)
                         sock.sendall(
                             f"movel(posx({x}, {y}, {z}, 168.5, -177.8, -11.9), v=80, a=80)".encode())
@@ -88,7 +89,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                         sock.sendall(b"set_digital_output(1, OFF)")
                         time.sleep(12)
                         sock.sendall(
-                            f"movel(posx({x}, {y}, {z + 300}, 168.5, -177.8, -11.9), v=80, a=80)".encode())
+                            f"movel(posx({x}, {y}, {z + zz}, 168.5, -177.8, -11.9), v=80, a=80)".encode())
                         time.sleep(13)
                         sock.sendall(b"movel(posx(-135.9, 609.5, 509.1,  168.8, -178.0, -11.6), v=80, a=80)")
                         time.sleep(15)
@@ -98,6 +99,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                         print(f'boxcount:{boxcount}')
                         boxcount = boxcount + 1
                         print(f'boxcount:{boxcount}')
+
                 return place, boxcount
 
     except KeyboardInterrupt:
@@ -113,7 +115,7 @@ def move_robot_conveyor(sock):
     camera = DepthCamera()
 
     try:
-        while True:
+        for i in range(1):
             data = camera.get_data()
             if data:
                 classification, centroid_x, centroid_y, distance = data
@@ -226,16 +228,20 @@ while True:
     classification, _, _, _ = camera.get_data()
     _, wantedSize = ST.take_buf(Buf)
     print(wantedSize)
-
+    time.sleep(10)
     x, Coords_val, Height = SA.place(size=wantedSize)
     coords = SA.coordinates(Coords_val=Coords_val, size=wantedSize, Height=Height)
     print(f'coords:{coords}')
     time.sleep(5)
     SA.give_coords(coords)
     loop = 4
-    if classification == 'xl':
-        loop = 3
-    for boxcount in range(loop):
-        _, boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
-        if boxcount == 3:
-            boxcount = 0
+    if classification == wantedSize:
+        if classification == 'xl':
+            loop = 3
+        for boxcount in range(loop):
+            _, boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
+            if boxcount == 3:
+                boxcount = 0
+    else:
+        time.sleep(4)
+        move_robot_conveyor(sock)
