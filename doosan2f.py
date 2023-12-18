@@ -240,15 +240,15 @@ while True:
         if classification == wantedSize:
             if classification == 'xl':
                 loop = 3
-            for boxcount in range(loop):
+            while True:
                 if classification != 'unknown':
                     _, boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
-                elif classification == 'unknown':
-                    loop = loop + 1
                 if boxcount == 3:
                     boxcount = 0
+                    break
                 elif classification == 'xl' and boxcount == 2:
                     boxcount = 0
+                    break
         else:
             time.sleep(4)
             move_robot_conveyor(sock)
