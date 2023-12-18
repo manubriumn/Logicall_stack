@@ -39,19 +39,17 @@ def scale_coordinate(pixel_coord):
 def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
     global status
     global xx
-
+    camera = DepthCamera()
     place = SA.coordinates(Coords_val, size, Height)
     print(f'place: {place}')
     x, y, z = place[boxcount]
-
-    camera = DepthCamera()
-
     try:
         data = camera.get_data()
         if data:
             classification, centroid_x, centroid_y, distance = data
-            if classification != size:
+            if classification != wantedSize:
                 move_robot_conveyor(sock)
+                return place, boxcount
             print(f"Classification: {classification}")
             print(f"Centroid Coordinates (x, y): ({centroid_x}, {centroid_y})")
             print(f"Distance: {distance} meters")
