@@ -7,6 +7,8 @@ import storage as ST
 status = 0
 xx = 0
 boxcount = 0
+z1 = {'s': 204.1, 'm': 245.8, 'l': 328.8, 'xl': 379.0, 'unknown':661.1}
+
 
 
 def scale_coordinate(pixel_coord):
@@ -62,7 +64,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
         sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
         time.sleep(2)
         if classification == size:
-            z1 = {'s': 204.1, 'm': 245.8, 'xl': 379.0}
+
             zz = z1[size]
             print(xx)
             time.sleep(2)
@@ -127,65 +129,16 @@ def move_robot_conveyor(sock):
             # =========== ROBOT HOME POS MVT =============#
             sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
             time.sleep(4)
-
-            # =========== MVT FOR SMALL =============#
-            if classification == "s" and not (-2 <= xx <= 2):
-                print(xx)
-                time.sleep(1)
-                sock.sendall(
-                    f"movel(posx(547.0, {xx}, 204.1, 168.5, -177.8, -11.9), v=200, a=200)".encode())  ### get small
-                time.sleep(2)
-                status = 1
-                print(f"stattt: {status}")
-                if status == 1:
-                    time.sleep(2)
-                    sock.sendall(b"set_digital_output(1, ON)")
-                    time.sleep(3)
-                    sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
-                    time.sleep(2)
-                    sock.sendall(b"movel(posx(630.6, 587.0, 500.4, 177.7, -173.2, -3.1), v=1000, a=1000)")
-                    time.sleep(2)
-                    sock.sendall(b"movel(posx(630.6, 587.0, 224.4, 177.7, -173.2, -3.1), v=200, a=200)")
-                    time.sleep(3)
-                    sock.sendall(b"movel(posx(630.7, 582.7, 200.5, 172.9, -173.5, -8.1), v=200, a=200)")
-                    time.sleep(3)
-                    sock.sendall(b"set_digital_output(1, OFF)")
-                    time.sleep(3)
-                    status = 0
-                    sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
-
-            # =========== MVT FOR MEDIUM =============#
-            elif classification == "m" and not (-2 <= xx <= 2):
-                print(xx)
-                time.sleep(1)
-                sock.sendall(
-                    f"movel(posx(545.8, {xx}, 245.8, 151.3, -176.5, -28.9), v=200, a=200)".encode())  ### get medium
-                time.sleep(2)
-                status = 2
-                print(f"stattt: {status}")
-                if status == 2:
-                    time.sleep(2)
-                    sock.sendall(b"set_digital_output(1, ON)")
-                    time.sleep(3)
-                    sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
-                    time.sleep(2)
-                    sock.sendall(b"movel(posx(630.6, 587.0, 500.4, 177.7, -173.2, -3.1), v=1000, a=1000)")
-                    time.sleep(2)
-                    sock.sendall(b"movel(posx(630.6, 587.0, 324.4, 177.7, -173.2, -3.1), v=200, a=200)")
-                    time.sleep(3)
-                    sock.sendall(b"movel(posx(630.7, 582.7, 282.5, 172.9, -173.5, -8.1), v=200, a=200)")
-                    time.sleep(3)
-                    sock.sendall(b"set_digital_output(1, OFF)")
-                    time.sleep(3)
-                    status = 0
-                    sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
+            z2 = {'s': 200.5, 'm': 282.5, 'l': 313, 'xl': 382.5, 'unknown':661.1}
+            zz = z1[classification]
+            zzz = z2[classification]
 
             # =========== MVT FOR BIG =============#
-            elif classification == "xl" and not (-2 <= xx <= 2):
+            if classification == "xl":
                 print(xx)
                 time.sleep(3)
                 sock.sendall(
-                    f"movel(posx(569.3, {xx}, 379.0, 145.9, -178.3, -34.3), v=60, a=60)".encode())  ### get big
+                    f"movel(posx(569.3, {xx}, {zz}, 145.9, -178.3, -34.3), v=60, a=60)".encode())  ### get big
                 time.sleep(5)
                 status = 3
                 print(f"stattt: {status}")
@@ -195,14 +148,36 @@ def move_robot_conveyor(sock):
                     time.sleep(6)
                     sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=80, a=80)")
                     time.sleep(7)
-                    sock.sendall(b"movel(posx(630.6, 587.0, 424.4, 177.7, -173.2, -3.1), v=80, a=80)")
-                    time.sleep(8)
-                    sock.sendall(b"movel(posx(630.7, 582.7, 382.5, 172.9, -173.5, -8.1), v=80, a=80)")
+                    sock.sendall(f"movel(posx(630.7, 582.7, {zzz}, 172.9, -173.5, -8.1), v=80, a=80)".encode())
                     time.sleep(9)
                     sock.sendall(b"set_digital_output(1, OFF)")
                     time.sleep(10)
                     status = 0
                     sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=80, a=80)")
+
+            # =========== MVT FOR SMALL MEDIUM LARGE =============#
+            elif classification != "unknown":
+                print(xx)
+                time.sleep(1)
+                sock.sendall(
+                    f"movel(posx(547.0, {xx}, {zz}, 168.5, -177.8, -11.9), v=200, a=200)".encode())  ### get small
+                time.sleep(2)
+                status = 1
+                print(f"stattt: {status}")
+                if status != 0:
+                    time.sleep(2)
+                    sock.sendall(b"set_digital_output(1, ON)")
+                    time.sleep(3)
+                    sock.sendall(b"movel(posx(559.0, -56.8, 650.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
+                    time.sleep(2)
+                    sock.sendall(b"movel(posx(630.6, 587.0, 500.4, 177.7, -173.2, -3.1), v=1000, a=1000)")
+                    time.sleep(2)
+                    sock.sendall(f"movel(posx(630.7, 582.7, {zzz}, 172.9, -173.5, -8.1), v=200, a=200)".encode())
+                    time.sleep(3)
+                    sock.sendall(b"set_digital_output(1, OFF)")
+                    time.sleep(3)
+                    status = 0
+                    sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
 
             elif classification == "unknown":
                 time.sleep(5)
@@ -226,7 +201,7 @@ while True:
     camera = DepthCamera()
     classification, _, _, _ = camera.get_data()
     _, wantedSize = ST.take_buf(Buf)
-    if classification != 'unknown' or classification == wantedSize:
+    if classification != 'unknown' and classification == wantedSize:
         _, wantedSize = ST.take_buf(Buf)
         print(wantedSize)
         time.sleep(5)
@@ -248,6 +223,6 @@ while True:
                 elif classification == 'xl' and boxcount == 3:
                     boxcount = 0
                     break
-        else:
-            time.sleep(4)
-            move_robot_conveyor(sock)
+    else:
+        time.sleep(4)
+        move_robot_conveyor(sock)
