@@ -225,7 +225,8 @@ while True:
     Buf = ST.fill_buf()
     camera = DepthCamera()
     classification, _, _, _ = camera.get_data()
-    if classification != 'unknown':
+    _, wantedSize = ST.take_buf(Buf)
+    if classification != 'unknown' or classification == wantedSize:
         _, wantedSize = ST.take_buf(Buf)
         print(wantedSize)
         time.sleep(5)
@@ -241,10 +242,10 @@ while True:
             while True:
                 if classification != 'unknown':
                     _, boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
-                if boxcount == 3:
+                if boxcount == 4:
                     boxcount = 0
                     break
-                elif classification == 'xl' and boxcount == 2:
+                elif classification == 'xl' and boxcount == 3:
                     boxcount = 0
                     break
         else:
