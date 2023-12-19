@@ -1,20 +1,22 @@
 import storage as ST
 import time
-matrix = [-420, -420, -420]
+matrix = [-420, -420]
 
 L_coords1 = [(-965, 350), (-965, 81), (-965, -185)]
 L_coords2 = [(-545, 350), (-545, 81), (-545, -185)]
-coords1 = [(-1065, 270), (-863, 270), (-1065, -128), (-863, -128)]
-coords2 = [(-648, 280), (-443, 280), (-648, -128), (-443, -128)]
+coords1 = [(-1065, -128), (-863, -128),(-1065, 270), (-863, 270)]
+coords2 = [(-648, -128), (-443, -128),(-648, 280), (-443, 280)]
 coords3 = [(-230, 280), (-230, 280), (-230, -128), (-230, -128)]
 
-
-
+def last_matrix(matrix):
+    old_matrix = matrix
+    print(old_matrix)
+    return old_matrix
 
 def place(size):
     coords_val = [False, False, False]
 
-    height_size = {'s': 85, 'm': 125, 'l': 165, 'xl': 260}
+    height_size = {'s': 85, 'm': 125, 'l': 210, 'xl': 260}
     height = height_size[size]
     if size == 'xl':
         if matrix[0] < matrix[2]:
