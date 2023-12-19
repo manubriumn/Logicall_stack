@@ -77,12 +77,12 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                 time.sleep(2)
                 sock.sendall(b"set_digital_output(1, ON)")
                 time.sleep(2)
-                sock.sendall(b"movel(posx(559.0, -56.8, 400, 169.3, 180.0, -10.7), v=200, a=200)")
+                sock.sendall(b"movel(posx(559.0, -56.8, 500, 169.3, 180.0, -10.7), v=200, a=200)")
                 time.sleep(3)
                 sock.sendall(b"movej(posj(121.9, 15.8, 75.8, 181.1, -84.3, -9.2), v=40, a=40)")
                 time.sleep(4)
                 sock.sendall(
-                    f"movel(posx({x}, {y}, {z + zz}, 168.5, -177.8, -11.9), v=200, a=200)".encode())
+                    f"movel(posx({x+ 100}, {y + 100}, {z + 10}, 168.5, -177.8, -11.9), v=200, a=200)".encode())
                 time.sleep(4)
                 sock.sendall(
                     f"movel(posx({x}, {y}, {z}, 168.5, -177.8, -11.9), v=200, a=200)".encode())
