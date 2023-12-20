@@ -18,15 +18,17 @@ def place(size):
 
     height_size = {'s': 85, 'm': 125, 'l': 210, 'xl': 260}
     height = height_size[size]
+
     if size == 'xl':
-        if matrix[0] < matrix[2]:
+        if matrix[0] <= matrix[1]:  # Ensure index 1 doesn't exceed index 0
             matrix[0] += height
             coords_val[0] = True
         else:
-            matrix[1] += height
+            extra_height = matrix[1] + height - matrix[0]
+            matrix[0] += height + extra_height
+            matrix[1] += extra_height
             coords_val[1] = True
-
-    elif size != 'xl':
+    else:
         smallest = matrix.index(min(matrix))
         if smallest != 2:
             matrix[smallest] += height
@@ -38,7 +40,6 @@ def place(size):
     if all(value >= 1750 for value in matrix):
         return True, coords_val, height
     return False, coords_val, height
-
 
 def coordinates(Coords_val, size, Height):
     index = Coords_val.index(True)
@@ -82,5 +83,4 @@ if __name__ == '__main__':
     coords = coordinates()
     print(coords)
     give_coords(coords)
-
 
