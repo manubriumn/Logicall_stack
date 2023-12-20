@@ -86,7 +86,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                     f"movel(posx({x + 300}, {y + 300}, {z + 275}, 52.4, 180, 139.3), v=200, a=200)".encode())
                 time.sleep(4)
                 sock.sendall(
-                    f"movel(posx({x + 100}, {y + 100}, {z + 10}, 52.4, 180, 139.3), v=200, a=200)".encode())
+                    f"movel(posx({x + 10}, {y + 10}, {z + 10}, 52.4, 180, 139.3), v=200, a=200)".encode())
                 time.sleep(4)
                 sock.sendall(
                     f"movel(posx({x}, {y}, {z}, 52.4, 180, 139.3), v=200, a=200)".encode())
@@ -225,7 +225,8 @@ while True:
     camera = DepthCamera()
     classification, _, _, _ = camera.get_data()
     if classification != 'unknown':
-        _, wantedSize = ST.take_buf(Buf)
+        if ST.buf_size == len(ST.Buf):
+            _, wantedSize = ST.take_buf(Buf)
         print(wantedSize)
         if classification == wantedSize:
             time.sleep(3)
