@@ -42,6 +42,8 @@ class DepthCamera:
 
         return None
 
+
+
     @staticmethod
     def classify_distance(distance):
         if 0.30 <= distance <= 0.32:
@@ -57,3 +59,5 @@ class DepthCamera:
 
     def stop(self):
         self.pipe.stop()
+
+
