@@ -4,7 +4,6 @@ import cv2
 
 def pallet(corner_x, corner_y, angle):
     print(f"Corner coordinate of mapped area: ({corner_x}, {corner_y}), Orientation Angle: {angle}")
-    return corner_x, corner_y, angle
 
 pipe = rs.pipeline()
 cfg = rs.config()
@@ -73,8 +72,7 @@ while True:
         kernel_size = (15, 15)  # Choose a valid odd kernel size
         depth_colormap = cv2.GaussianBlur(depth_colormap, kernel_size, 0)
 
-        # Call the pallet function
-        x, y, o = pallet(corner_x, corner_y, angle)
+        pallet(corner_x, corner_y, angle)
 
     # Display the frames
     cv2.imshow('Color', color_image)
@@ -86,6 +84,3 @@ while True:
 # Stop streaming
 pipe.stop()
 cv2.destroyAllWindows()
-
-# Print the values after pipe.stop()
-print("Final values after pipe.stop():",  x, y, o)
