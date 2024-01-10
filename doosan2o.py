@@ -64,13 +64,14 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             yy = scaled_result
             print(f"Scaled coordinate for yy  {yy}")
             # =========== ROBOT HOME POS MVT =============#
-        sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
+        #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
+        sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
         time.sleep(1)
         zz = z1[size]
         print(yy)
         time.sleep(1)
         sock.sendall(
-            f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())  ### get small
+            f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
         time.sleep(1)
         status = 1
         print(f"stattt: {status}")
@@ -78,48 +79,61 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             time.sleep(2)
             sock.sendall(b"set_digital_output(1, ON)")
             time.sleep(2)
-            sock.sendall(b"movel(posx(559.0, -56.8, 500, 169.3, 180.0, -10.7), v=1000, a=1000)")
+            sock.sendall(b"movel(posx(559.0, -56.8, 750, 169.3, 180.0, -10.7), v=1000, a=1000)")
             time.sleep(1)
-
             if classification == 'xl':
                 sock.sendall(b"movej(posj(121.9, 15.8, 75.8, 181.1, -84.3, -9.2), v=100, a=100)")
                 time.sleep(2)
+                if z > 500:
+                    sock.sendall(
+                        f"movel(posx(-420.0, 605.8, {z+ 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
+                    time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x + 100}, {y + 100}, {z + 275}, 52.4, 180, 139.3), v=1000, a=1000)".encode())
+                    f"movel(posx({x + 100}, {y + 100}, {z + 100}, 52.4, 180, 139.3), v=1000, a=1000)".encode())
                 time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x + 10}, {y + 10}, {z + 10}, 52.4, 180, 139.3), v=1000, a=1000)".encode())
+                    f"movel(posx({x + 10}, {y + 10}, {z + 10}, 158.4, -180.0, -112.0), v=1000, a=1000)".encode())
                 time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x}, {y}, {z}, 52.4, 180, 139.3), v=1000, a=1000)".encode())
+                    f"movel(posx({x}, {y}, {z}, 158.4, -180.0, -112.0), v=1000, a=1000)".encode())
                 time.sleep(2)
                 sock.sendall(b"set_digital_output(1, OFF)")
                 time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x}, {y}, {z + 25}, 52.4, 180, 139.3), v=100, a=100)".encode())
+                    f"movel(posx({x}, {y}, {z + 25}, 158.4, -180.0, -112.0), v=100, a=100)".encode())
+
             elif classification == size:
                 sock.sendall(b"movej(posj(121.9, 15.8, 75.8, 181.1, -84.3, -9.2), v=100, a=100)")
                 time.sleep(2)
+                if z > 500:
+                    sock.sendall(
+                        f"movel(posx(-420.0, 605.8, {z + 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
+                    time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x + 100}, {y + 100}, {z + 275}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
+                    f"movel(posx({x + 100}, {y + 100}, {z + 100}, 66.5, -180, -113.1), v=1000, a=1000)".encode())
                 time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x+ 50}, {y + 50}, {z + 10}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
+                    f"movel(posx({x+ 50}, {y + 50}, {z + 10}, 66.5, -180, -113.1), v=1000, a=1000)".encode())
                 time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x}, {y}, {z}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
+                    f"movel(posx({x}, {y}, {z}, 66.5, -180, -113.1), v=1000, a=1000)".encode())
                 time.sleep(2)
                 sock.sendall(b"set_digital_output(1, OFF)")
                 time.sleep(2)
                 sock.sendall(
-                    f"movel(posx({x}, {y}, {z + 25}, 168.5, -177.8, -11.9), v=100, a=100)".encode())
-            time.sleep(2)
-            sock.sendall(b"movel( posx(-518.1, 69.4, 408.9, 168.8, -178.0, -11.6), v=1000, a=2000)") #SAFE PLACE NR 1
+                    f"movel(posx({x}, {y}, {z + 25}, 66.5, -180, -113.1), v=100, a=100)".encode())
+            # time.sleep(2)
+            # sock.sendall(b"movel( posx(-518.1, 69.4, 600, 168.8, -178.0, -11.6), v=1000, a=2000)") #SAFE PLACE NR 1
             time.sleep(1)
-            sock.sendall(b"movel(posx(-135.9, 609.5, 509.1,  168.8, -178.0, -11.6), v=1000, a=1000)") #SAFE PLACE NR 2
+            if z > 500:
+                sock.sendall(
+                    f"movel(posx(-420.0, 605.8, {z + 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
+                time.sleep(2)
+            sock.sendall(b"movel(posx(-135.9, 609.5, 600,  168.8, -178.0, -11.6), v=1000, a=1000)") #SAFE PLACE NR 2
             time.sleep(2)
             status = 0
-            sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)") #HOME
+            #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)") #HOME
+            sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
             time.sleep(4)
             boxcount = boxcount + 1
         return place, boxcount
@@ -150,19 +164,20 @@ def move_robot_conveyor(sock):
             print(f"Scaled coordinate for yy  {yy}")
 
             # =========== ROBOT HOME POS MVT =============#
-            sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
+            #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
+            sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), -44.5), v=1000, a=2000)")
             time.sleep(4)
             z2 = {'s': 200.5, 'm': 282.5, 'l': 313, 'xl': 382.5, 'unknown':661.1}
             zz = z1[classification]
             zzz = z2[classification]
 
-            # =========== MVT FOR BIG =============#
+            # =========== MVT FOR XL =============#
             if classification == "xl":
                 print(yy)
                 time.sleep(1)
                 sock.sendall(
                     f"movel(posx(569.3, {yy}, {zz}, 145.9, -178.3, -34.3), v=200, a=200)".encode())  ### get big
-                time.sleep(2)
+                time.sleep(1)
                 status = 3
                 print(f"stattt: {status}")
                 if status == 3:
@@ -180,7 +195,8 @@ def move_robot_conveyor(sock):
                     status = 0
                     sock.sendall(b"movel(posx(630.7, 582.7, 661, 172.9, -173.5, -8.1), v=1000, a=2000)")
                     time.sleep(1)
-                    sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
+                    #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
+                    sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
 
             # =========== MVT FOR SMALL MEDIUM LARGE =============#
             elif classification != "unknown":
@@ -188,7 +204,7 @@ def move_robot_conveyor(sock):
                 time.sleep(1)
                 sock.sendall(
                     f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=200, a=200)".encode())  ### get small
-                time.sleep(2)
+                time.sleep(1)
                 status = 1
                 print(f"stattt: {status}")
                 if status != 0:
@@ -199,19 +215,21 @@ def move_robot_conveyor(sock):
                     time.sleep(2)
                     sock.sendall(b"movel(posx(630.6, 587.0, 650, 177.7, -173.2, -3.1), v=1000, a=1000)")
                     time.sleep(2)
-                    sock.sendall(f"movel(posx(630.7, 582.7, {zzz}, 172.9, -173.5, -8.1), v=200, a=200)".encode())
+                    sock.sendall(f"movel(posx(630.7, 582.7, {zzz}, 66.5, -180, -113.1), v=200, a=200)".encode())
                     time.sleep(3)
                     sock.sendall(b"set_digital_output(1, OFF)")
                     time.sleep(2)
                     status = 0
                     sock.sendall(b"movel(posx(630.7, 582.7, 661, 172.9, -173.5, -8.1), v=1000, a=2000)")
                     time.sleep(1)
-                    sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
+                    #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=2000)")
+                    sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
 
             elif classification == "unknown":
                 time.sleep(5)
                 status = 0
-                sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
+                #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
+                sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=200, a=200)")
 
     except KeyboardInterrupt:
         pass
@@ -223,7 +241,8 @@ def move_robot_conveyor(sock):
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 robot_address = ('192.168.137.100', 9225)
 sock.connect(robot_address)
-sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
+#sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")  #HOME POS NR 1
+sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=200, a=200)")  #HOME POS NR 2
 Buf = ST.fill_buf()
 # ==================================== #
 
@@ -254,7 +273,8 @@ def run():
                         loop = 4
                     while True:
                         if classification != 'unknown':
-                            _, boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
+                            #BARC.main()
+                            _,boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
                         if boxcount == loop:
                             boxcount = 0
                             break
@@ -264,4 +284,5 @@ def run():
 
 
 if __name__ == '__main__':
+
     run()
