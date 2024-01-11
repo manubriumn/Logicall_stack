@@ -19,25 +19,25 @@ Buf = ST.fill_buf()
 #     if SA.matrix[0] >= SA.matrix[1] : return 100
 #     elif SA.matrix[0] < SA.matrix[1] : return -100
 
-def scale_coordinate(pixel_coord):
+def scale_coordinate(pixel_coord, classification):
     # Given coordinates
-    real_world_start = -4
-    real_world_end = -76.0
+    real_world_start = {'s': 47, 'm': 47, 'l': 40, 'xl': 35, 'unknown': 1}
+    real_world_end = {'s': -190, 'm': -190, 'l': -126, 'xl': -120, 'unknown': 1}
 
     # Given pixel coordinates
-    pixel_start = 300
-    pixel_end = 360
+    pixel_start = {'s': 265, 'm': 265, 'l': 215, 'xl': 240, 'unknown': 1}
+    pixel_end = {'s': 425, 'm': 425, 'l': 403, 'xl': 390, 'unknown': 1}
 
     # Calculate the scaling factor for x-values
-    x_scaling_factor = (real_world_end - real_world_start) / (pixel_end - pixel_start)
+    x_scaling_factor = (real_world_end[classification] - real_world_start[classification]) / (pixel_end[classification] - pixel_start[classification])
 
     # Function to scale x-coordinate
     def scale_x_coordinate(x, scaling_factor):
-        scaled_x = (x - pixel_start) * scaling_factor + real_world_start
+        scaled_x = (x - pixel_start[classification]) * scaling_factor + real_world_start[classification]
         return scaled_x
 
     # Check if the pixel_coord is within the given range
-    if pixel_coord < pixel_start or pixel_coord > pixel_end:
+    if pixel_coord < pixel_start[classification] or pixel_coord > pixel_end[classification]:
         return "0"
 
     # Scale the input pixel coordinate
@@ -49,6 +49,7 @@ def scale_coordinate(pixel_coord):
 def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
     global status
     global yy
+    time.sleep(1)
     camera = DepthCamera()
     place = SA.coordinates(Coords_val, size, Height)
     print(f'place: {place}')
@@ -65,7 +66,8 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             print(f"Distance: {distance} meters")
 
             # =========== SCALE VISION COORD TO REAL WORLD =============#
-            scaled_result = scale_coordinate(centroid_x)
+
+            scaled_result = scale_coordinate(centroid_x, classification)
             yy = scaled_result
             print(f"Scaled coordinate for yy  {yy}")
             # =========== ROBOT HOME POS MVT =============#
@@ -162,7 +164,7 @@ def move_robot_conveyor(sock):
             print(f"Distance: {distance} meters")
 
             # =========== SCALE VISION COORD TO REAL WORLD =============#
-            scaled_result = scale_coordinate(centroid_x)
+            scaled_result = scale_coordinate(centroid_x, classification)
             yy = scaled_result
             print(f"Scaled coordinate for yy  {yy}")
 
