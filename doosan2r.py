@@ -21,11 +21,11 @@ Buf = ST.fill_buf()
 
 def scale_coordinate(pixel_coord, classification):
     # Given coordinates
-    real_world_start = {'s': 47, 'm': 47, 'l': 40, 'xl': 35, 'unknown': 1}
+    real_world_start = {'s': 47, 'm': 47, 'l': 40, 'xl': 35, 'unknown': 0}
     real_world_end = {'s': -190, 'm': -190, 'l': -126, 'xl': -120, 'unknown': 1}
 
     # Given pixel coordinates
-    pixel_start = {'s': 265, 'm': 265, 'l': 215, 'xl': 240, 'unknown': 1}
+    pixel_start = {'s': 265, 'm': 265, 'l': 215, 'xl': 240, 'unknown': 0}
     pixel_end = {'s': 425, 'm': 425, 'l': 403, 'xl': 390, 'unknown': 1}
 
     # Calculate the scaling factor for x-values
