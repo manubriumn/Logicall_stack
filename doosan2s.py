@@ -57,16 +57,18 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
     try:
         data = camera.get_data()
         if data:
-            classification, centroid_x, centroid_y, distance = data
+            classification, _,_,_ = data
             if classification != wantedSize:
                 move_robot_conveyor(sock)
                 return place, boxcount
             print(f"Classification: {classification}")
+            move = {'s':(347.8, -56.8, 661.0, 140.5, 180.0, -41.5) , 'm':(363.0, -56.8, 661.0, 138.7, 180.0, -43.3) , 'l': (401.4, -56.8, 661.0, 139.5, 180.0, -42.5), 'xl':(498.4, -56.8, 661.0, 138.6, 180.0, -43.4)}
+            sock.sendall(f"movel(posx{move[classification]}, v=2000, a=2000)".encode())
+            time.sleep(1)
+            _, centroid_x, centroid_y, distance = camera.get_data()
             print(f"Centroid Coordinates (x, y): ({centroid_x}, {centroid_y})")
             print(f"Distance: {distance} meters")
-
             # =========== SCALE VISION COORD TO REAL WORLD =============#
-
             scaled_result = scale_coordinate(centroid_x, classification)
             yy = scaled_result
             print(f"Scaled coordinate for yy  {yy}")
