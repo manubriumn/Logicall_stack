@@ -5,13 +5,19 @@ import stacking_algorithm as SA
 import storage as ST
 import barcode_scanner as BARC
 
+# =========== ROBOT CONN & INIT  ============= #
 z1 = {'s': 204.1, 'm': 245.8, 'l': 328.8, 'xl': 379.0, 'unknown': 661.1}
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+robot_address = ('192.168.137.100', 9225)
+sock.connect(robot_address)
+#sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")  #HOME POS NR 1
+sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=200, a=200)")  #HOME POS NR 2
+Buf = ST.fill_buf()
+# ==================================== #
 
 # def check_position():
 #     if SA.matrix[0] >= SA.matrix[1] : return 100
 #     elif SA.matrix[0] < SA.matrix[1] : return -100
-
-
 
 def scale_coordinate(pixel_coord):
     # Given coordinates
@@ -47,7 +53,6 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
     place = SA.coordinates(Coords_val, size, Height)
     print(f'place: {place}')
     x, y, z = place[boxcount]
-    #BARC.main()
     try:
         data = camera.get_data()
         if data:
@@ -66,13 +71,11 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             # =========== ROBOT HOME POS MVT =============#
         #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
         sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
-        time.sleep(1)
         zz = z1[size]
         print(yy)
-        time.sleep(1)
         sock.sendall(
             f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
-        time.sleep(1)
+        time.sleep(.1)
         status = 1
         print(f"stattt: {status}")
         if status == 1:
@@ -82,11 +85,11 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             sock.sendall(b"movel(posx(559.0, -56.8, 750, 169.3, 180.0, -10.7), v=1000, a=1000)")
             time.sleep(1)
             if classification == 'xl':
-                sock.sendall(b"movej(posj(121.9, 15.8, 75.8, 181.1, -84.3, -9.2), v=100, a=100)")
+                sock.sendall(b"movej(posj(100, 15.8, 75.8, 181.1, -84.3, -9.2), v=100, a=100)")
                 time.sleep(2)
                 if z > 500:
                     sock.sendall(
-                        f"movel(posx(-420.0, 605.8, {z+ 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
+                        f"movel(posx(-161.6, 719.1, {z + 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
                     time.sleep(2)
                 sock.sendall(
                     f"movel(posx({x + 100}, {y + 100}, {z + 100}, 52.4, 180, 139.3), v=1000, a=1000)".encode())
@@ -103,11 +106,11 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                     f"movel(posx({x}, {y}, {z + 25}, 158.4, -180.0, -112.0), v=100, a=100)".encode())
 
             elif classification == size:
-                sock.sendall(b"movej(posj(121.9, 15.8, 75.8, 181.1, -84.3, -9.2), v=100, a=100)")
+                sock.sendall(b"movej(posj(100, 15.8, 75.8, 181.1, -84.3, -9.2), v=100, a=100)")
                 time.sleep(2)
                 if z > 500:
                     sock.sendall(
-                        f"movel(posx(-420.0, 605.8, {z + 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
+                        f"movel(posx(-161.6, 719.1, {z + 150}, 136.9, 175.8, -174.1), v=1000, a=1000)".encode())
                     time.sleep(2)
                 sock.sendall(
                     f"movel(posx({x + 100}, {y + 100}, {z + 100}, 66.5, -180, -113.1), v=1000, a=1000)".encode())
@@ -237,15 +240,6 @@ def move_robot_conveyor(sock):
         camera.stop()
 
 
-# =========== ROBOT CONN & INIT  ============= #
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-robot_address = ('192.168.137.100', 9225)
-sock.connect(robot_address)
-#sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")  #HOME POS NR 1
-sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=200, a=200)")  #HOME POS NR 2
-Buf = ST.fill_buf()
-# ==================================== #
-
 def run():
     boxcount = 0
     status = 0
@@ -259,12 +253,10 @@ def run():
                 _, wantedSize = ST.take_buf(Buf)
             print(wantedSize)
             if classification == wantedSize:
-                time.sleep(1)
                 global Height
                 x, Coords_val, Height = SA.place(size=wantedSize)
                 coords = SA.coordinates(Coords_val=Coords_val, size=wantedSize, Height=Height)
                 print(f'coords:{coords}')
-                time.sleep(1)
                 SA.give_coords(coords)
                 if classification == wantedSize:
                     if classification == 'xl':
@@ -277,6 +269,8 @@ def run():
                             _,boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
                         if boxcount == loop:
                             boxcount = 0
+                            break
+                        if Height >= 580:
                             break
                     ST.refill_buf()
             else:
