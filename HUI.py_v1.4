@@ -6,6 +6,7 @@ from download import Download as DL
 from login import Login
 import doosan2
 import vision_check
+from threading import Thread
 
 
 class HUI:
@@ -16,6 +17,9 @@ class HUI:
             self.Main_frame()  # comment out to skip
         else:
             exit()
+    def start():
+        robot = Thread(target=doosan2.run)
+        robot.start()
 
     def Main_frame(self):
         while True:
@@ -44,25 +48,32 @@ class HUI:
                                          height=100,
                                          fg_color="green",
                                          font=("Arial", 50),
-                                         command= doosan2.run
-                                         )
+                                         command= self.start)
             Start_button.pack(pady=20, padx=100), Start_button.place(x=500, y=50)
 
             Vision_button = CTK.CTkButton(master=self.MainHUI_frame,
-                                          text="Vision",
-                                          width=250,
+                                          text="Vision Robot",
+                                          width=550,
                                           height=100,
                                           font=("Arial", 50),
                                           command=vision_check.run_vision)
             Vision_button.pack(pady=20, padx=100), Vision_button.place(x=500, y=175)
 
+            Vision_button2 = CTK.CTkButton(master=self.MainHUI_frame,
+                                          text="Vision barcode",
+                                          width=550,
+                                          height=100,
+                                          font=("Arial", 50),
+                                          command=vision_check.run_vision)
+            Vision_button2.pack(pady=20, padx=100), Vision_button2.place(x=500, y=300)
+
             Download_button = CTK.CTkButton(master=self.MainHUI_frame,
-                                            text="Download",
-                                            width=250,
+                                            text="Download excel",
+                                            width=550,
                                             height=100,
                                             font=("Arial", 50),
                                             command=self.Download)
-            Download_button.pack(pady=20, padx=100), Download_button.place(x=800, y=175)
+            Download_button.pack(pady=20, padx=100), Download_button.place(x=500, y=425)
 
             Update_button = CTK.CTkButton(master=self.MainHUI_frame,
                                           text="Update",
