@@ -91,8 +91,8 @@ class HUI:
         Update_button.pack(pady=20, padx=100), Update_button.place(x=10, y=350)
 
         self.box_displays = []
-        box = ['small', 'medium', 'large', 'extra large']
-        for pallet_index in range(4):
+        box = ['small', 'medium', 'large', 'extra large', 'wanted size']
+        for pallet_index in range(5):
             label, palleter = self.Box_display(f"{box[pallet_index]}", self.MainHUI_frame, pallet_index, 0)
             self.box_displays.append((label, palleter))
 
@@ -123,6 +123,9 @@ class HUI:
 
     def Box_counts(self):
         count_list = storage.count()
+        if sum(count_list) >= 12:
+            sizes = {0 : 'small', 1 : 'medium', 2 : 'large', 3 : 'extra large'}
+            count_list.append(sizes[count_list.index(max(count_list))])
         print(count_list)
         return count_list
 
