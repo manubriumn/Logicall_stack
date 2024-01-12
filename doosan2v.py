@@ -11,7 +11,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 robot_address = ('192.168.137.100', 9225)
 sock.connect(robot_address)
 #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")  #HOME POS NR 1
-sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=200, a=200)")  #HOME POS NR 2
+sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")  #HOME POS NR 2
 Buf = ST.fill_buf()
 # ==================================== #
 
@@ -19,14 +19,14 @@ Buf = ST.fill_buf()
 #     if SA.matrix[0] >= SA.matrix[1] : return 100
 #     elif SA.matrix[0] < SA.matrix[1] : return -100
 
+
 def scale_coordinate(pixel_coord, classification):
     # Given coordinates
-    real_world_start = {'s': 47, 'm': 47, 'l': 40, 'xl': 35, 'unknown': 0}
-    real_world_end = {'s': -190, 'm': -190, 'l': -126, 'xl': -120, 'unknown': 1}
-
+    real_world_start = {'s': 30, 'm': 47, 'l': -10, 'xl': 35, 'unknown': 0}
+    real_world_end = {'s': -107, 'm': -190, 'l': -137, 'xl': -120, 'unknown': 1}
     # Given pixel coordinates
-    pixel_start = {'s': 265, 'm': 265, 'l': 215, 'xl': 240, 'unknown': 0}
-    pixel_end = {'s': 425, 'm': 425, 'l': 403, 'xl': 390, 'unknown': 1}
+    pixel_start = {'s': 290, 'm': 265, 'l': 284, 'xl': 240, 'unknown': 0}
+    pixel_end = {'s': 365, 'm': 425, 'l': 409, 'xl': 390, 'unknown': 1}
 
     # Calculate the scaling factor for x-values
     x_scaling_factor = (real_world_end[classification] - real_world_start[classification]) / (pixel_end[classification] - pixel_start[classification])
@@ -254,7 +254,6 @@ def move_robot_conveyor(sock):
     finally:
         camera.stop()
 
-
 def run():
     boxcount = 0
     status = 0
@@ -293,5 +292,4 @@ def run():
 
 
 if __name__ == '__main__':
-
     run()
