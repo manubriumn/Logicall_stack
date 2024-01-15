@@ -3,8 +3,10 @@ import random
 sizes = []
 size = ['s', 'm', 'l', 'xl']
 def Random_size():
-    Fill_size()
+    if sizes == []:
+        Fill_size()
     chosen_size = random.choice(sizes)
+    sizes.remove(chosen_size)
     return chosen_size
 
 def Fill_size():
@@ -15,7 +17,7 @@ def Fill_size():
         sizes.append(size[2])
     for i in range(6):
         sizes.append(size[3])
-    print(sizes)
+
 
 if __name__== '__main__':
     print(Random_size())
