@@ -42,16 +42,16 @@ def scale_coordinate(pixel_coord, classification):
 
     # Scale the input pixel coordinate
     scaled_x = scale_x_coordinate(pixel_coord, x_scaling_factor)
-
     return scaled_x
 
 
 def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
     global status
     global yy
+
+    # =========== CALL VISION =============#
     camera = DepthCamera()
     place = SA.coordinates(Coords_val, size, Height)
-    print(f'place: {place}')
     x, y, z = place[boxcount]
     try:
         data = camera.get_data()
@@ -61,6 +61,7 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
                 move_robot_conveyor(sock)
                 return place, boxcount
             print(f"Classification: {classification}")
+            BARC.main() # READ BARCODE
 
             # =========== MOVE BACK TO MAKE SURE ONLY DETECT 1 BOX =============#
             move = {'s':(347.8, -56.8, 661.0, 140.5, 180.0, -41.5) , 'm':(363.0, -56.8, 661.0, 138.7, 180.0, -43.3) ,
@@ -69,24 +70,20 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             sock.sendall(f"movel(posx{move[classification]}, v=2000, a=2000)".encode())
             time.sleep(1)
             _, centroid_x, centroid_y, distance = camera.get_data()
-            print(f"Centroid Coordinates (x, y): ({centroid_x}, {centroid_y})")
-            print(f"Distance: {distance} meters")
 
             # =========== SCALE VISION COORD TO REAL WORLD =============#
             scaled_result = scale_coordinate(centroid_x, classification)
             yy = scaled_result
-            print(f"Scaled coordinate for yy  {yy}")
+
             # =========== ROBOT HOME POS MVT =============#
-        #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
-        sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
-        zz = z1[size]
-        print(yy)
-        sock.sendall(
-            f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
-        time.sleep(.1)
-        status = 1
-        print(f"stattt: {status}")
-        if status == 1:
+            #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)")
+            sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
+            zz = z1[size]
+            sock.sendall(f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=1000, a=1000)".encode())
+            time.sleep(.1)
+            status = 1
+
+        if status == 1 :
             time.sleep(2)
             sock.sendall(b"set_digital_output(1, ON)")
             time.sleep(2)
@@ -145,7 +142,6 @@ def move_robot_pallet(sock, boxcount, Coords_val, size, classification):
             status = 0
             #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=1000, a=1000)") #HOME
             sock.sendall(b"movel(posx(559.0, -56.8, 661.0, 139.4, 180.0, -42.6), v=1000, a=2000)")
-            time.sleep(4)
             boxcount = boxcount + 1
         return place, boxcount
 
@@ -173,13 +169,12 @@ def move_robot_conveyor(sock):
                     'unknown' : (559.0, -56.8, 661.0, 139.4, 180.0, -42.6)}
             sock.sendall(f"movel(posx{move[classification]}, v=2000, a=2000)".encode())
             _, centroid_x, centroid_y, distance = camera.get_data()
-            print(f"Centroid Coordinates (x, y): ({centroid_x}, {centroid_y})")
-            print(f"Distance: {distance} meters")
+
 
             # =========== SCALE VISION COORD TO REAL WORLD =============#
             scaled_result = scale_coordinate(centroid_x, classification)
             yy = scaled_result
-            print(f"Scaled coordinate for yy  {yy}")
+
 
             # =========== ROBOT HOME POS MVT =============#
             #sock.sendall(b"movel(posx(559.0, -56.8, 661.1, 169.3, 180.0, -10.7), v=200, a=200)")
@@ -191,13 +186,13 @@ def move_robot_conveyor(sock):
 
             # =========== MVT FOR XL =============#
             if classification == "xl":
-                print(yy)
+
                 time.sleep(1)
                 sock.sendall(
                     f"movel(posx(569.3, {yy}, {zz}, 145.9, -178.3, -34.3), v=1000, a=2000)".encode())  ### get big
                 time.sleep(1)
                 status = 3
-                print(f"stattt: {status}")
+
                 if status == 3:
                     time.sleep(1)
                     sock.sendall(b"set_digital_output(1, ON)")
@@ -218,13 +213,13 @@ def move_robot_conveyor(sock):
 
             # =========== MVT FOR SMALL MEDIUM LARGE =============#
             elif classification != "unknown":
-                print(yy)
+
                 time.sleep(1)
                 sock.sendall(
                     f"movel(posx(547.0, {yy}, {zz}, 168.5, -177.8, -11.9), v=1000, a=2000)".encode())  ### get small
                 time.sleep(1)
                 status = 1
-                print(f"stattt: {status}")
+
                 if status != 0:
                     time.sleep(1)
                     sock.sendall(b"set_digital_output(1, ON)")
@@ -261,16 +256,18 @@ def run():
     while True:
         camera = DepthCamera()
         classification, _, _, _ = camera.get_data()
+        time.sleep(.3)
+        camera.stop()
         if classification != 'unknown':
             if ST.buf_size == len(ST.Buf):
                 global wantedSize
                 _, wantedSize = ST.take_buf(Buf)
-            print(wantedSize)
+
             if classification == wantedSize:
                 global Height
                 x, Coords_val, Height = SA.place(size=wantedSize)
                 coords = SA.coordinates(Coords_val=Coords_val, size=wantedSize, Height=Height)
-                print(f'coords:{coords}')
+
                 SA.give_coords(coords)
                 if classification == wantedSize:
                     if classification == 'xl':
@@ -278,14 +275,15 @@ def run():
                     else:
                         loop = 4
                     while True:
-                        if classification != 'unknown':
-                            #BARC.main()
+                        if classification != 'unknown' and Height <= 580:
+
                             _,boxcount = move_robot_pallet(sock, boxcount, Coords_val, wantedSize, classification)
                         if boxcount == loop:
                             boxcount = 0
                             break
                         if Height >= 580:
-                            break
+                            return 'finished'
+                            print ("finished")
                     ST.refill_buf()
             else:
                 move_robot_conveyor(sock)
