@@ -26,7 +26,7 @@ class HUI:
         vision1.start()
 
     def barcode_vision(self):
-        vision2 = Thread(target=barcode_scanner.main())
+        vision2 = Thread(target=barcode_scanner.look_barcode())
         vision2.start()
 
     def Main_frame(self):
@@ -35,7 +35,7 @@ class HUI:
         CTK.set_appearance_mode("dark")
         CTK.set_default_color_theme("dark-blue")
 
-        Box_stack = CTK.CTkLabel(master=self.MainHUI_frame, text="Box Stacking", font=("Arial", 40))
+        Box_stack = CTK.CTkLabel(master=self.MainHUI_frame, text="Box Buffer", font=("Arial", 40))
         Box_stack.pack(pady=5, padx=150)
         Box_stack.place(x=50, y=30)
 
@@ -82,17 +82,9 @@ class HUI:
                                         command=self.Download)
         Download_button.pack(pady=20, padx=100), Download_button.place(x=500, y=425)
 
-        Update_button = CTK.CTkButton(master=self.MainHUI_frame,
-                                      text="Update",
-                                      width=50,
-                                      height=50,
-                                      font=("Arial", 18),
-                                      command=self.Box_counts)
-        Update_button.pack(pady=20, padx=100), Update_button.place(x=10, y=350)
-
         self.box_displays = []
         box = ['small', 'medium', 'large', 'extra large', 'wanted size']
-        for pallet_index in range(5):
+        for pallet_index in range(len(box)):
             label, palleter = self.Box_display(f"{box[pallet_index]}", self.MainHUI_frame, pallet_index, 0)
             self.box_displays.append((label, palleter))
 
@@ -117,16 +109,16 @@ class HUI:
         return self.Login_val
 
     def Download(self):
-        print("Download started")
         download_instance = DL()
         download_instance.download()
 
     def Box_counts(self):
         count_list = storage.count()
-        if sum(count_list) >= 12:
-            sizes = {0 : 'small', 1 : 'medium', 2 : 'large', 3 : 'extra large'}
+
+        if sum(count_list) >= 11:
+            last_buf = count_list.copy()  # Create a copy of count_list to store the last buffer
+            sizes = {0: 'small', 1: 'medium', 2: 'large', 3: 'extra large'}
             count_list.append(sizes[count_list.index(max(count_list))])
-        print(count_list)
         return count_list
 
     def Update_boxes_periodically(self):
