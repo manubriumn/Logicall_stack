@@ -24,7 +24,7 @@ class DepthCamera:
         depth_scale = self.pipe.get_active_profile().get_device().first_depth_sensor().get_depth_scale()
         depth_image_meters = depth_image * depth_scale
 
-        x, y = 320, 240
+        x, y = 320, 280
         distance = depth_image_meters[y, x]
 
         mask = np.where(depth_image_meters < 0.5, 255, 0).astype(np.uint8)
@@ -46,18 +46,28 @@ class DepthCamera:
 
     @staticmethod
     def classify_distance(distance):
-        if 0.30 <= distance <= 0.32:
+        if 0.30 <= distance <= 0.33:
             return "xl"
         elif 0.34 <= distance <= 0.38:
             return "l"
-        elif 0.43 <= distance <= 0.45:
+        elif 0.43 <= distance <= 0.46:
             return "m"
-        elif 0.47 <= distance <= 0.49:
+        elif 0.47 <= distance <= 0.50:
             return "s"
         else:
             return "unknown"
+        #
+        # if 0.31 <= distance <= 0.33:
+        #     return "xl"
+        # elif 0.36 <= distance <= 0.38:
+        #     return "l"
+        # elif 0.45 <= distance <= 0.47:
+        #     return "m"
+        # elif 0.48 <= distance <= 0.50:
+        #     return "s"
+        # else:
+        #     return "unknown"
 
     def stop(self):
         self.pipe.stop()
-
 
