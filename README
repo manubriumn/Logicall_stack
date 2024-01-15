@@ -1,0 +1,5 @@
+Doosan2.py is the main movement code for the robot.
+you have to have all these file for robot to run:
+server.py, depth_how.py, stacking algorithm.py, storage.py, randomsize.py, login.py, HUI.py, barcode.py, and finally doosan2.py
+you also need DRL studio in order to run the robot.
+if all requirement is met, start the server first by clicking the "run" button in drl studio, then go to HUI files, right click and run.
